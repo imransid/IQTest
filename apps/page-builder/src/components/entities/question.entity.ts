@@ -1,28 +1,25 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class Quote {
+export class Question {
   @Field(() => Int)
   id: number;
 
   @Field()
-  name: string;
+  questionText: string;
 
-  @Field()
-  designation: string;
-
-  @Field()
-  quote: string;
-
-  @Field()
-  imageUrl: string;
+  @Field(() => [Answer])
+  answers: Answer[];
 }
 
 @ObjectType()
-export class Designation {
+export class Answer {
   @Field(() => Int)
   id: number;
 
   @Field()
-  designation: string;
+  answerText: string;
+
+  @Field(() => Int)
+  questionId: number;
 }

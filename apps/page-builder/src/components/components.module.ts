@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-// import { QuoteService } from './quotes/quote.service';
-// import { QuoteResolver } from './quotes/quote.resolver';
+import { QuestionService } from './question/question.service';
+import { QuestionResolver } from './question/question.resolver';
 
 import { PrismaModule } from '../../../../prisma/prisma.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -21,6 +21,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  providers: [JwtService, ConfigService], // QuoteService, QuoteResolver,
+  providers: [JwtService, ConfigService, QuestionService, QuestionResolver],
 })
 export class ComponentsModule {}
