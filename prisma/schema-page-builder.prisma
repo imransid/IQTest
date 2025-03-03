@@ -17,12 +17,12 @@ model campaigns {
 }
 
 model question {
-  id           Int       @id @default(autoincrement())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime? @default(now()) @updatedAt
-  questionText String
-
-  answers answer[]
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @default(now()) @updatedAt
+  questionText  String
+  correctAnswer String
+  answers       answer[]
 }
 
 model answer {

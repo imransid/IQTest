@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { QuestionService } from './question.service';
-import { Question } from '../entities/question.entity';
+import { Question, QuestionResponse } from '../entities/question.entity';
 import { CreateQuestionInput, UpdateQuestionInput } from '../dto/answer.input';
 import { StandardResponse } from '../dto/standard-response.dto';
 
@@ -17,12 +17,16 @@ export class QuestionResolver {
   }
 
   // Query to retrieve all questions with pagination
-  @Query(() => [Question])
-  findAllQuestions(
+  @Query(() => [QuestionResponse])
+  async findAllQuestions(
     @Args('page', { type: () => Int, nullable: true }) page?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
-  ): Promise<Question[]> {
-    return this.questionService.findAll(page || 1, limit || 10);
+  ): Promise<QuestionResponse[]> {
+    let qusRes = await this.questionService.findAll(page || 1, limit || 10);
+
+    console.log(qusRes, 'qusRes');
+
+    return qusRes;
   }
 
   // Query to retrieve a single question by ID

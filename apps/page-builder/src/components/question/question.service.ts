@@ -2,7 +2,11 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaPageBuilderService } from '../../../../../prisma/prisma-page-builder.service';
 import { CreateQuestionInput, UpdateQuestionInput } from '../dto/answer.input';
 
-import { Answer, Question } from '../entities/question.entity';
+import {
+  Answer,
+  Question,
+  QuestionResponse,
+} from '../entities/question.entity';
 
 @Injectable()
 export class QuestionService {
@@ -12,7 +16,7 @@ export class QuestionService {
 
   // Create a new question with answers
   async create(createQuestionInput: CreateQuestionInput): Promise<Question> {
-    const { questionText, answers } = createQuestionInput;
+    const { questionText, answers, correctAnswer } = createQuestionInput;
 
     try {
       // Using Prisma transaction to ensure both question and answers are created atomically
@@ -20,6 +24,7 @@ export class QuestionService {
         const createdQuestion = await prisma.question.create({
           data: {
             questionText,
+            correctAnswer,
             answers: {
               create: answers.map((answerText) => ({ answerText })),
             },
@@ -45,15 +50,30 @@ export class QuestionService {
   }
 
   // Retrieve all questions with pagination
-  async findAll(page: number = 1, limit: number = 10): Promise<Question[]> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<QuestionResponse[]> {
     try {
       const skip = (page - 1) * limit;
 
-      return await this.prisma.question.findMany({
+      const questions = await this.prisma.question.findMany({
         skip,
         take: limit,
         include: { answers: true },
       });
+
+      // Transform response to match the required format
+      let qus = questions.map((question) => ({
+        id: question.id,
+        questionText: question.questionText,
+        answers: [...question.answers.map((a) => a.answerText)],
+        correctAnswer: question.correctAnswer, // You can modify this logic as needed
+      }));
+
+      console.log('qus', qus);
+
+      return qus;
     } catch (error) {
       this.logger.error(
         `Error retrieving questions: ${error.message}`,

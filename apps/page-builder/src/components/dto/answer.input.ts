@@ -14,6 +14,10 @@ export class CreateQuestionInput {
   @IsString()
   questionText: string;
 
+  @IsNotEmpty()
+  @IsString()
+  correctAnswer: string;
+
   @Field(() => [String])
   @IsArray()
   @ArrayNotEmpty()
@@ -30,6 +34,11 @@ export class UpdateQuestionInput extends PartialType(CreateQuestionInput) {
   @IsOptional()
   @IsString()
   questionText?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  correctAnswer?: string;
 
   @Field(() => [String], { nullable: true })
   @IsOptional()

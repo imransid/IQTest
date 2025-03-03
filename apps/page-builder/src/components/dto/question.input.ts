@@ -5,6 +5,9 @@ export class CreateQuestionInput {
   @Field()
   questionText: string;
 
+  @Field()
+  correctAnswer: string;
+
   @Field(() => [String])
   answers: string[];
 }
