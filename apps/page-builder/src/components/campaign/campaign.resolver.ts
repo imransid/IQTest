@@ -1,14 +1,12 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { QuestionService } from './question.service';
+import { CampaignService } from './campaign.service';
 import { Question, QuestionResponse } from '../entities/question.entity';
-import { UpdateQuestionInput } from '../dto/answer.input';
-
+import { CreateQuestionInput, UpdateQuestionInput } from '../dto/answer.input';
 import { StandardResponse } from '../dto/standard-response.dto';
-import { CreateQuestionInput } from '../dto/question.input';
 
 @Resolver(() => Question)
-export class QuestionResolver {
-  constructor(private readonly questionService: QuestionService) {}
+export class CampaignResolver {
+  constructor(private readonly questionService: CampaignService) {}
 
   // Mutation to create a new question
   @Mutation(() => Question)
@@ -25,6 +23,9 @@ export class QuestionResolver {
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ): Promise<QuestionResponse[]> {
     let qusRes = await this.questionService.findAll(page || 1, limit || 10);
+
+    console.log(qusRes, 'qusRes');
+
     return qusRes;
   }
 

@@ -9,7 +9,7 @@ import {
 } from '../entities/question.entity';
 
 @Injectable()
-export class QuestionService {
+export class CampaignService {
   private logger = new Logger('QuestionService');
 
   constructor(private prisma: PrismaPageBuilderService) {}
@@ -111,38 +111,28 @@ export class QuestionService {
     }
   }
 
+  // Update a question and its answers
   async update(
     id: number,
     updateQuestionInput: UpdateQuestionInput,
   ): Promise<Question> {
-    const { questionText, answers, correctAnswer } = updateQuestionInput;
+    const { questionText, answers } = updateQuestionInput;
 
     try {
-      const existingData = await this.findOne(id); // Use `id`, not `updateQuestionInput.id`
-
       // Using Prisma transaction for atomic updates
       const updatedQuestion = await this.prisma.$transaction(async (prisma) => {
-        const updateData: any = { questionText, correctAnswer };
-
-        // If new answers are provided, delete old ones and create new ones
-        if (Array.isArray(answers) && answers.length > 0) {
-          updateData.answers = {
-            deleteMany: {}, // Remove existing answers
-            create: answers.map((answerText) => ({ answerText })), // Add new answers
-          };
-        } else {
-          // If no new answers are provided, retain existing ones (No `deleteMany`)
-          updateData.answers = {
-            connect: existingData.answers.map((ans) => ({ id: ans.id })),
-          };
-        }
-
         const updated = await prisma.question.update({
           where: { id },
-          data: updateData,
+          data: {
+            questionText,
+            answers: {
+              // Delete existing answers and create new ones
+              deleteMany: {},
+              create: answers.map((answerText) => ({ answerText })),
+            },
+          },
           include: { answers: true },
         });
-
         return updated;
       });
 
@@ -153,7 +143,7 @@ export class QuestionService {
         error.stack,
       );
       throw new HttpException(
-        `Error updating question: ${error.message}`,
+        'Error updating question',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
