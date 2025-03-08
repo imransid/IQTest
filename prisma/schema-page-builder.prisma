@@ -39,3 +39,13 @@ model reportResult {
   mobile        String
   result        String
 }
+
+model campaign {
+  id       Int    @id @default(autoincrement())
+  campaign String
+  code     String
+  url      String
+
+  createdAt DateTime  @default(now())
+  updateAt  DateTime? @default(now())
+}

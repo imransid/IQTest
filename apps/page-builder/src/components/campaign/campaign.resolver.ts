@@ -1,64 +1,38 @@
+// src/campaign/campaign.resolver.ts
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CampaignService } from './campaign.service';
-import { Question, QuestionResponse } from '../entities/question.entity';
-import { CreateQuestionInput, UpdateQuestionInput } from '../dto/answer.input';
-import { StandardResponse } from '../dto/standard-response.dto';
+import { Campaign } from '../entities/campaign.entity';
+import { CreateCampaignDto, UpdateCampaignDto } from '../dto/campaign.dto';
 
-@Resolver(() => Question)
+@Resolver(() => Campaign)
 export class CampaignResolver {
-  constructor(private readonly questionService: CampaignService) {}
+  constructor(private readonly campaignService: CampaignService) {}
 
-  // Mutation to create a new question
-  @Mutation(() => Question)
-  createQuestion(
-    @Args('createQuestionInput') createQuestionInput: CreateQuestionInput,
-  ): Promise<Question> {
-    return this.questionService.create(createQuestionInput);
+  @Mutation(() => Campaign)
+  createCampaign(@Args('data') data: CreateCampaignDto) {
+    return this.campaignService.create(data);
   }
 
-  // Query to retrieve all questions with pagination
-  @Query(() => [QuestionResponse])
-  async findAllQuestions(
-    @Args('page', { type: () => Int, nullable: true }) page?: number,
-    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
-  ): Promise<QuestionResponse[]> {
-    let qusRes = await this.questionService.findAll(page || 1, limit || 10);
-
-    console.log(qusRes, 'qusRes');
-
-    return qusRes;
+  @Query(() => [Campaign])
+  findAllCampaigns() {
+    return this.campaignService.findAll();
   }
 
-  // Query to retrieve a single question by ID
-  @Query(() => Question)
-  findQuestion(@Args('id', { type: () => Int }) id: number): Promise<Question> {
-    return this.questionService.findOne(id);
+  @Query(() => Campaign, { nullable: true })
+  findCampaignById(@Args('id', { type: () => Int }) id: number) {
+    return this.campaignService.findOne(id);
   }
 
-  // Mutation to update a question
-  @Mutation(() => Question)
-  updateQuestion(
+  @Mutation(() => Campaign)
+  updateCampaign(
     @Args('id', { type: () => Int }) id: number,
-    @Args('updateQuestionInput') updateQuestionInput: UpdateQuestionInput,
-  ): Promise<Question> {
-    return this.questionService.update(id, updateQuestionInput);
+    @Args('data') data: UpdateCampaignDto,
+  ) {
+    return this.campaignService.update(id, data);
   }
 
-  // Mutation to delete a question
-  @Mutation(() => StandardResponse)
-  async removeQuestion(
-    @Args('id', { type: () => Int }) id: number,
-  ): Promise<StandardResponse> {
-    await this.questionService.remove(id);
-    return { success: true, message: 'Question successfully deleted' };
-  }
-
-  // Mutation to delete a specific answer
-  @Mutation(() => StandardResponse)
-  async removeAnswer(
-    @Args('id', { type: () => Int }) id: number,
-  ): Promise<StandardResponse> {
-    await this.questionService.removeAnswer(id);
-    return { success: true, message: 'Answer successfully deleted' };
+  @Mutation(() => Campaign)
+  removeCampaign(@Args('id', { type: () => Int }) id: number) {
+    return this.campaignService.remove(id);
   }
 }
