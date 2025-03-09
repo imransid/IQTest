@@ -43,6 +43,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/page-builder/tsconfig.app.json"
       }
+    },
+    "telegram": {
+      "type": "application",
+      "root": "apps/telegram",
+      "entryFile": "main",
+      "sourceRoot": "apps/telegram/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/telegram/tsconfig.app.json"
+      }
     }
   },
   "monorepo": true,

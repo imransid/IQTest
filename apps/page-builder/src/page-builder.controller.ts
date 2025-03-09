@@ -6,6 +6,6 @@ export class PageBuilderController {
 
   @Get()
   getHello(): string {
-    return 'Page Builder';
+    return 'WELCOME :)';
   }
 }

@@ -13,6 +13,23 @@ services:
     depends_on:
       - rabbitmq
 
+  telegram:
+    build:
+      context: .
+      dockerfile: ./apps/telegram/Dockerfile
+      target: development
+    command: yarn start:dev telegram
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - user-db
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '4007:4007'
   user-service:
     build:
       context: .
