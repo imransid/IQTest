@@ -1,8 +1,27 @@
-# IQTest
+# IQTest - Intelligent Testing Platform
 
-## 🚀 Project Overview
+A microservices-based IQ testing system with JWT authentication, multi-database support, and third-party integrations.
 
-**IQTest** is a scalable and efficient IQ testing platform built using modern web technologies. It leverages a microservices architecture to ensure high performance and reliability.
+## Tech Stack
+
+- NestJS | GraphQL | PostgreSQL | Docker | Prisma | Google OAuth | Telegram API
+
+## 🌟 Features
+
+- JWT-based authentication system
+- Google OAuth 2.0 integration
+- Multi-service database architecture
+- GraphQL API endpoints
+- Email notification system
+- Telegram bot integration
+- Containerized deployment
+- Automated database migrations
+
+## Quick Start
+
+````bash
+git clone https://github.com/imransid/IQTest.git && cd IQTest
+
 
 ## 🛠 Tech Stack
 
@@ -27,17 +46,40 @@ Ensure you have the following installed:
 ```bash
 git clone https://github.com/imransid/IQTest.git
 cd iqtest
-```
+````
 
 ### Environment Variables
 
-Create a `.env` file in the root directory and configure the required environment variables:
+Create a `.env` file in your project root with the following configurations:
 
-```env
-DATABASE_URL=postgres://user:password@localhost:5432/iqtest
-PORT=3000
-GRAPHQL_ENDPOINT=/graphql
-```
+# Auth Configuration
+
+JWT_SECRET='your_jwt_secret'
+GOOGLE_CLIENT_ID='your_google_client_id'
+GOOGLE_CLIENT_SECRET='your_google_secret'
+GOOGLE_CALLBACK_URL='http://localhost:4000/auth/google/callback'
+
+# Database Configuration
+
+USER_DB_URI=postgresql://user:pass@user-db:5432/user-db
+NOTICE_DB_URI=postgresql://user:pass@notice-db:5432/notice-db
+PAGE_BUILDER_DB_URI=postgresql://user:pass@page-builder-db:5432/page-builder-db
+
+# Email Service
+
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS='your_app_password'
+
+# Telegram Integration
+
+TELEGRAM_TOKEN=your_bot_token
+TELEGRAM_WEBHOOK_URL=https://your-domain.com/telegram/webhook
+
+# File Storage
+
+UPLOAD_DIR=uploads
 
 ### Run Services with Docker
 
@@ -73,7 +115,7 @@ If you prefer running the services manually:
 Once the server is running, access the GraphQL playground at:
 
 ```
-http://localhost:3000/graphql
+http://localhost:4099/graphql
 ```
 
 ## 🛠 Development & Contribution
