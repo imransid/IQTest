@@ -29,7 +29,7 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '4007:4007'
+      - '4077:4077'
   user-service:
     build:
       context: .
