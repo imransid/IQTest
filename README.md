@@ -136,6 +136,9 @@ docker exec 02e383bf2add npx prisma migrate deploy --schema=./prisma/schema-user
 docker exec 02e383bf2add npx prisma db push --force-reset --schema=./prisma/schema-user.prisma
 docker exec 210eccb332fb npx prisma db push --force-reset --schema=./prisma/schema-page-builder.prisma
 
+sudo docker stop 9ffb35bd3c23 201dfdfa13c4 f9a7d3ac7a34
+sudo docker rm 9ffb35bd3c23 201dfdfa13c4 f9a7d3ac7a34
+
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).

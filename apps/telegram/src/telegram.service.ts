@@ -12,12 +12,10 @@ export class TelegramService {
   private apiUrl = `https://api.telegram.org/bot${this.botToken}`;
   private bot = new TelegramBot(this.botToken, { polling: true });
   private paidUsers = new Map();
-
   constructor() {
     this.handlePreCheckoutQuery();
     this.handleSuccessfulPayment();
   }
-
   private handlePreCheckoutQuery() {
     this.bot.on('pre_checkout_query', (query) => {
       this.bot.answerPreCheckoutQuery(query.id, true).catch(() => {
@@ -25,7 +23,6 @@ export class TelegramService {
       });
     });
   }
-
   private handleSuccessfulPayment() {
     this.bot.on('message', (msg) => {
       if (msg.successful_payment) {
@@ -37,7 +34,6 @@ export class TelegramService {
       }
     });
   }
-
   async createInvoiceLink(
     payload: string,
     currency: string,
@@ -47,7 +43,6 @@ export class TelegramService {
       const { label, amount } = prices[0];
       const title = `item for ${amount}`;
       const description = `Buying an item for ${amount} stars.`;
-
       const invoiceLink = await this.bot.createInvoiceLink(
         title,
         description,
@@ -56,14 +51,12 @@ export class TelegramService {
         currency,
         prices,
       );
-
       return invoiceLink;
     } catch (error) {
       console.error('Error creating invoice link:', error);
       throw error;
     }
   }
-
   async setWebhook() {
     const webhookUrl = process.env.TELEGRAM_WEBHOOK_URL;
     try {
