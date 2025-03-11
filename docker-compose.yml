@@ -23,7 +23,6 @@ services:
     env_file:
       - .env
     depends_on:
-      - user-db
       - rabbitmq
     volumes:
       - .:/usr/src/app

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 
@@ -9,6 +9,15 @@ const TelegramBot = require('node-telegram-bot-api');
 @Injectable()
 export class TelegramService {
   private botToken = process.env.TELEGRAM_TOKEN;
+
+  private readonly BASE_URL = 'https://gatewayapi.telegram.org/';
+  private readonly TOKEN = process.env.API_TOKEN;
+
+  private readonly HEADERS = {
+    Authorization: `Bearer ${this.TOKEN}`,
+    'Content-Type': 'application/json',
+  };
+
   private apiUrl = `https://api.telegram.org/bot${this.botToken}`;
   private bot = new TelegramBot(this.botToken, { polling: true });
   private paidUsers = new Map();
@@ -16,6 +25,7 @@ export class TelegramService {
     this.handlePreCheckoutQuery();
     this.handleSuccessfulPayment();
   }
+
   private handlePreCheckoutQuery() {
     this.bot.on('pre_checkout_query', (query) => {
       this.bot.answerPreCheckoutQuery(query.id, true).catch(() => {
@@ -66,6 +76,57 @@ export class TelegramService {
       console.log('Webhook set successfully');
     } catch (error) {
       console.error('Error setting webhook:', error);
+    }
+  }
+
+  async sendVerificationCode(phone: string): Promise<any> {
+    const endpoint = 'sendVerificationMessage'; // Replace with actual API endpoint
+    const jsonBody = {
+      phone_number: phone,
+      code_length: 6,
+      ttl: 300, // OTP expires in 5 minutes
+      payload: 'otp_verification',
+      callback_url: 'https://pokerapi.jumatechs.xyz/telegram/webhook/otp',
+    };
+
+    try {
+      const response = await axios.post(
+        `${this.BASE_URL}${endpoint}`,
+        jsonBody,
+        { headers: this.HEADERS },
+      );
+
+      return response.data; // Returns { ok: true, request_id: "123456" }
+    } catch (error) {
+      throw new HttpException(
+        error.response?.data || 'Failed to send verification code',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /**
+   * Verifies the OTP received from the user.
+   */
+  async verifyOtp(requestId: string, code: string): Promise<boolean> {
+    const endpoint = 'checkVerificationStatus'; // Replace with actual API endpoint
+    const jsonBody = { request_id: requestId, code };
+
+    try {
+      const response = await axios.post(
+        `${this.BASE_URL}${endpoint}`,
+        jsonBody,
+        { headers: this.HEADERS },
+      );
+
+      return response.data?.result.verification_status?.status === 'code_valid';
+    } catch (error) {
+      console.log('error', error);
+
+      throw new HttpException(
+        error.response?.data || 'OTP verification failed',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }

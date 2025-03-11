@@ -32,9 +32,56 @@ export class TelegramController {
     }
   }
 
+  @Post('sendOtp')
+  async sendOtp(@Body() body: { phone: string }) {
+    const result = await this.telegramService.sendVerificationCode(body.phone);
+    return result?.ok
+      ? {
+          success: true,
+          message: 'OTP sent successfully',
+          requestId: result.result.request_id,
+        }
+      : { success: false, message: 'Failed to send OTP' };
+  }
+
+  @Post('verifyOtp')
+  async verifyOtp(@Body() body: { requestId: string; code: string }) {
+    const isValid = await this.telegramService.verifyOtp(
+      body.requestId,
+      body.code,
+    );
+
+    
+    return isValid
+      ? { success: true, message: 'OTP verified successfully' }
+      : { success: false, message: 'Invalid OTP' };
+  }
+
   @Post('webhook')
   async handleWebhook(@Body() body: any) {
     console.log('Webhook received:', body);
     // Handle webhook logic, like handling payment status or user commands
+  }
+
+  @Post('webhook/otp')
+  async handleOtpWebhook(@Body() body: any) {
+    console.log('Received OTP verification webhook:', body);
+
+    if (!body || !body.request_id || !body.verification_status) {
+      return { success: false, message: 'Invalid webhook payload' };
+    }
+
+    if (body.verification_status.status === 'code_valid') {
+      console.log(
+        `OTP verification successful for request ID: ${body.request_id}`,
+      );
+      return {
+        success: true,
+        message: 'OTP verified successfully via webhook',
+      };
+    } else {
+      console.log(`OTP verification failed for request ID: ${body.request_id}`);
+      return { success: false, message: 'OTP verification failed' };
+    }
   }
 }

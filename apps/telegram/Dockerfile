@@ -10,9 +10,12 @@ COPY prisma ./prisma/
 
 COPY . .
 
-RUN npx prisma generate --schema=./prisma/schema-user.prisma
+# RUN  npm rebuild bcrypt --build-from-source
+
+# RUN npx prisma generate --schema=./prisma/schema-user.prisma
 
 RUN yarn build
+
 
 CMD ["node", "dist/apps/telegram/main"]
 
