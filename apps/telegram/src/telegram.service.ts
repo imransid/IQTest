@@ -34,17 +34,63 @@ export class TelegramService {
       });
     });
   }
+
+  // private handleSuccessfulPayment() {
+  //   this.bot.on('message', (msg) => {
+  //     if (msg.successful_payment) {
+  //       const userId = msg.from.id;
+  //       this.paidUsers.set(
+  //         userId,
+  //         msg.successful_payment.telegram_payment_charge_id,
+  //       );
+  //     }
+  //   });
+  // }
+
   private handleSuccessfulPayment() {
     this.bot.on('message', (msg) => {
       if (msg.successful_payment) {
         const userId = msg.from.id;
-        this.paidUsers.set(
-          userId,
-          msg.successful_payment.telegram_payment_charge_id,
+        const paymentInfo = msg.successful_payment;
+
+        console.log('✅ Payment Successful!');
+        console.log(`User ID: ${userId}`);
+        console.log(
+          `Amount Paid: ${paymentInfo.total_amount / 100} ${paymentInfo.currency}`,
         );
+        console.log(`Invoice Payload: ${paymentInfo.invoice_payload}`);
+        console.log(
+          `Telegram Payment Charge ID: ${paymentInfo.telegram_payment_charge_id}`,
+        );
+
+        // Store the payment info in a Map
+        this.paidUsers.set(userId, paymentInfo.telegram_payment_charge_id);
+
+        const paymentData = {
+          userId,
+          telegramPaymentChargeId:
+            msg.successful_payment.telegram_payment_charge_id,
+          providerPaymentChargeId:
+            msg.successful_payment.provider_payment_charge_id,
+          currency: msg.successful_payment.currency,
+          totalAmount: msg.successful_payment.total_amount / 100, // Convert to normal value
+          status: 'PAID',
+        };
+
+
+        
+
+        // Send confirmation message to the user
+        this.bot.sendMessage(
+          userId,
+          `🎉 Thank you! Your payment of ${paymentInfo.total_amount / 100} ${paymentInfo.currency} has been received successfully.`,
+        );
+
+        // (Optional) Call an API or database to save the payment details
       }
     });
   }
+
   async createInvoiceLink(
     payload: string,
     currency: string,
