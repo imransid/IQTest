@@ -51,7 +51,6 @@ export class TelegramController {
       body.code,
     );
 
-    
     return isValid
       ? { success: true, message: 'OTP verified successfully' }
       : { success: false, message: 'Invalid OTP' };
@@ -82,6 +81,24 @@ export class TelegramController {
     } else {
       console.log(`OTP verification failed for request ID: ${body.request_id}`);
       return { success: false, message: 'OTP verification failed' };
+    }
+  }
+
+  @Post('sendMail')
+  async sendMail(
+    @Body() body: { subject: string; message: string; email: string },
+  ) {
+    const { subject, message, email } = body;
+
+    if (!subject || !message || !email) {
+      return { success: false, message: 'Missing required fields' };
+    }
+
+    try {
+      await this.telegramService.sendMail(email, subject, message);
+      return { success: true, message: 'Email sent successfully' };
+    } catch (error) {
+      return { success: false, message: 'Failed to send email' };
     }
   }
 }

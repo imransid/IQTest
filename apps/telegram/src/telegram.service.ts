@@ -1,7 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
-
+import { MailerService } from '@nestjs-modules/mailer';
+import { sendMail } from '../../../utils/email.util';
 dotenv.config();
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -21,7 +22,7 @@ export class TelegramService {
   private apiUrl = `https://api.telegram.org/bot${this.botToken}`;
   private bot = new TelegramBot(this.botToken, { polling: true });
   private paidUsers = new Map();
-  constructor() {
+  constructor(private readonly mailService: MailerService) {
     this.handlePreCheckoutQuery();
     this.handleSuccessfulPayment();
   }
@@ -96,10 +97,13 @@ export class TelegramService {
         { headers: this.HEADERS },
       );
 
+      console.log('response', response);
+
       return response.data; // Returns { ok: true, request_id: "123456" }
     } catch (error) {
+      console.log('error', error);
       throw new HttpException(
-        error.response?.data || 'Failed to send verification code',
+        error.response?.data?.error || 'Failed to send verification code',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -128,5 +132,10 @@ export class TelegramService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async sendMail(email: string, subject: string, body: string) {
+    console.log('email, subject, body,', email, subject, body);
+    sendMail(email, subject, body, this.mailService);
   }
 }
