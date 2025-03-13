@@ -137,8 +137,8 @@ docker exec b9be5ee14f91 npx prisma generate --schema=./prisma/schema-user.prism
 docker exec b9be5ee14f91 npx prisma db push --force-reset --schema=./prisma/schema-user.prisma
 docker exec d32097f9b1bc npx prisma db push --force-reset --schema=./prisma/schema-page-builder.prisma
 
-sudo docker stop e7da9550e8cb 8b409acaf4fc 6d50da5c7758 be68a7bb7f92 9376686ee3ce
-sudo docker rm e7da9550e8cb 8b409acaf4fc 6d50da5c7758 be68a7bb7f92 9376686ee3ce
+sudo docker stop 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8
+sudo docker rm 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8
 
 AAFQEgAAGXTJv4NeP2Wo2YSSQNqPaXh_r0XjlSb_XkXpQg
 
